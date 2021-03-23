@@ -72,7 +72,7 @@ def download(session, base_url, base_dir, file_name, stream=False, force=False):
                 initial=resume_at or 0,
                 total=filesize,
             ) as progress:
-                for data in res.iter_content(chunk_size=4096):
+                for data in res.iter_content(chunk_size=40960):
                     progress.update(fi.write(data))
         else:
             fi.write(res.content)
