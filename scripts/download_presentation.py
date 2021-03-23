@@ -65,15 +65,15 @@ def download(session, base_url, base_dir, file_name, stream=False, force=False):
 
     with open(dest_file, "ab" if resume_at else "wb") as fi:
         if stream:
-            for data in tqdm(
-                res.iter_content(),
+            with tqdm(
                 unit="B",
                 unit_scale=True,
                 unit_divisor=1024,
                 initial=resume_at or 0,
                 total=filesize,
-            ):
-                fi.write(data)
+            ) as progress:
+                for data in res.iter_content(chunk_size=4096):
+                    progress.update(fi.write(data))
         else:
             fi.write(res.content)
 
