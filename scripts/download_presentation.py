@@ -17,7 +17,8 @@ def download_slides(session, base_url, base_dir, max_workers):
     items = []
 
     for item in root:
-        items.append(item.attrib["{http://www.w3.org/1999/xlink}href"])
+        if href := item.attrib.get("{http://www.w3.org/1999/xlink}href"):
+            items.append(href)
         if txt := item.attrib.get("text"):
             items.append(txt)
 
