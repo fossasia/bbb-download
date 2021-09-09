@@ -3,12 +3,18 @@ Modified BBB Playback webapp to support any presentation host
 
 ## Download a BigBlueButton recording
 
-1. Install dependencies
+1. Create and activate virtual environment
+```sh
+python3 -m venv venv
+source venv/bin/activate
+```
+
+2. Install dependencies
 
 Python 3.8
 
 ```sh
-pip -r requirements.txt
+pip install -r requirements.txt
 ```
 
 2. Run `python scripts/download_presentation.py <bbb_server_url> <recording_id>`
