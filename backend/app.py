@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, send_file
 
+import os
 from os import path, makedirs
-from shutil import make_archive
 from zipfile import ZipFile
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
@@ -120,6 +120,35 @@ def download_meeting(url: str, meeting_id: str, max_workers: int = 16):
 def main(url: str, meeting_id: str, max_workers: int = 16):
     download_meeting(url, meeting_id, max_workers=max_workers)
 
+def loopOverFiles(dirName, zipObj):
+    for folderName, subFolders, fileNames in os.walk(dirName):
+            for fileName in fileNames:
+                filePath = os.path.join(folderName, fileName)
+                filePathArr = filePath.split('..')
+                if len(filePathArr)==1:
+                  zipObj.write(filePath, filePath)
+                else:
+                  zipObj.write(filePath, filePathArr[1])
+
+def createzip(dirName):
+    with ZipFile('recording.zip', 'w') as zipObj:
+        # add the folder data from presentation folder
+        loopOverFiles(dirName, zipObj)
+        folders = ['acornmediaplayer', 'css', 'lib']
+        # add player files
+        for folder in folders:
+            loopOverFiles('../' + folder, zipObj)
+        files = ['logo.png', 'playback.css', 'playback.js', 'playback.html']
+        for file in files:
+            zipObj.write('../' + file)
+        
+def recordingExists(meeting_id):
+    for folderName, subFolders, fileNames in os.walk('./presentation'):
+        if meeting_id in subFolders:
+            return True
+        else:
+            return False
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -128,15 +157,12 @@ def hello():
     return render_template('index.html')
   if request.method == 'POST':
     url = request.form['server']
-    # meeting_id = request.form['id']
     server = 'https://' + url.split('/')[2]
     meeting_id = url.split('=')[1]
     try:
-        main(server, meeting_id)
-        make_archive(str(meeting_id), 'zip', './presentation/' + str(meeting_id))
-        with ZipFile('recording.zip', 'w') as zipr:
-            zipr.write('../player.zip')
-            zipr.write(str(meeting_id)+'.zip')
+        if not recordingExists(meeting_id):
+            main(server, meeting_id)
+        createzip('./presentation/' + meeting_id)
         try:
             return send_file('recording.zip')
         except Exception as e:

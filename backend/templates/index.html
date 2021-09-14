@@ -46,6 +46,41 @@
       margin: auto;
     }
 
+    .tick-mark {
+      position: relative;
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      margin: auto;
+    }
+
+    .tick-mark::before {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      height: 50%;
+      width: 3px;
+      background-color: #00A300;
+      content: "";
+      transform: translateX(10px) rotate(-45deg);
+      transform-origin: left bottom;
+      margin: auto;
+    }
+
+    .tick-mark::after {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 100%;
+      background-color: #00A300;
+      content: "";
+      transform: translateX(10px) rotate(-45deg);
+      transform-origin: left bottom;
+      margin: auto;
+    }
+
+
     @-webkit-keyframes rotate {
 
       /* 100% keyframe for  clockwise. 
@@ -65,23 +100,18 @@
     </span>
   </nav>
 
-  <form action="/" class="form-group custom-form" method="POST" name="form" id="form" role="form">
+  <form class="form-group custom-form" name="form" id="form" role="form">
     <div class="m-auto form-group col-md-offset-4 col-xs-offset-2 col-xs-8 col-md-4 form-div-board mb-0">
       <label for="server">Enter Recording URL:</label>
       <div class="input-group">
-        <input type="text" class="form-control" id="server" name="server" required="true">
+        <input type="text" class="form-control" id="server" name="server" required="true" />
       </div>
-      <!-- <label for="id">Enter Recording ID:</label>
-      <div class="input-group">
-        <input type="text" class="form-control" id="id" name="id" required="true">
-      </div> -->
 
-      {%if downloaded %}
-      Downloaded...
-      {% else %}
       <div id="loading">
       </div>
-      {% endif %}
+      <div id="tick-mark">
+      </div>
+
       <div class="tac">
         <button type="submit" id="submit" class="btn btn-outline-success mt-2">Submit</button>
       </div>
@@ -99,7 +129,35 @@
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
   <script>
-    $('#submit').click(() => $('#loading').addClass('loading'));
+    $('.form-group').on('submit', (e) => {
+      e.preventDefault();
+      const form = document.getElementById('form');
+      submitForm('form');
+    })
+
+    const submitForm = (formId) => {
+      $('#loading').addClass('loading');
+      const formData = new FormData(document.getElementById(formId));
+      const url = '/';
+      fetch(url, {
+        method: 'POST',
+        body: formData,
+      }).then((res) => {
+        $('#loading').removeClass('loading');
+        $('#tick-mark').addClass('tick-mark');
+        return res.blob();
+      }).then((blob) => {
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = "recording.zip";
+        document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+        a.click();
+        a.remove();  //afterwards we remove the element again    
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
   </script>
 </body>
 
