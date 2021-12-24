@@ -6,6 +6,7 @@ from zipfile import ZipFile
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 import xml.etree.ElementTree as ET
+import shutil
 
 import typer
 import requests
@@ -119,8 +120,9 @@ def download_meeting(url: str, meeting_id: str, max_workers: int = 16):
 
 def main(url: str, meeting_id: str, max_workers: int = 16):
     download_meeting(url, meeting_id, max_workers=max_workers)
+    createZIPAndDeleteFiles(meeting_id)
 
-def loopOverFiles(dirName, zipObj):
+def loopOverFiles(dirName: str, zipObj):
     for folderName, subFolders, fileNames in os.walk(dirName):
             for fileName in fileNames:
                 filePath = os.path.join(folderName, fileName)
@@ -130,8 +132,11 @@ def loopOverFiles(dirName, zipObj):
                 else:
                   zipObj.write(filePath, filePathArr[1])
 
-def createzip(dirName):
-    with ZipFile('recording.zip', 'w') as zipObj:
+def createZIPAndDeleteFiles(meetingId: str):
+    dirName = './presentation/' + meetingId
+    zipName = 'recording-' + meetingId + '.zip'
+    print(zipName)
+    with ZipFile(zipName, 'w') as zipObj:
         # add the folder data from presentation folder
         loopOverFiles(dirName, zipObj)
         folders = ['acornmediaplayer', 'css', 'lib']
@@ -141,18 +146,19 @@ def createzip(dirName):
         files = ['logo.png', 'playback.css', 'playback.js', 'playback.html']
         for file in files:
             zipObj.write('../' + file)
+    shutil.rmtree(dirName)
         
-def recordingExists(meeting_id):
-    for folderName, subFolders, fileNames in os.walk('./presentation'):
-        if meeting_id in subFolders:
+def recordingExists(meeting_id: str):
+    zipName = 'recording-' + meeting_id + '.zip'
+    for folderName, subFolders, fileNames in os.walk('.'):
+        if zipName in fileNames:
             return True
-        else:
-            return False
+    return False
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
-def hello():
+def root():
   if request.method == 'GET':
     return render_template('index.html')
   if request.method == 'POST':
@@ -162,9 +168,9 @@ def hello():
     try:
         if not recordingExists(meeting_id):
             main(server, meeting_id)
-        createzip('./presentation/' + meeting_id)
+        zipName = 'recording-' + meeting_id + '.zip'
         try:
-            return send_file('recording.zip')
+            return send_file(zipName)
         except Exception as e:
             return str(e)
 
