@@ -153,5 +153,6 @@ Thumbs.db #thumbnail cache on Windows
 
 presentation/
 
-# recording.zip
+# recording zip files
 recording.zip
+recording-*.zip
