@@ -84,7 +84,7 @@ def download(session, base_url, base_dir, file_name, stream=False, force=False):
             fi.write(res.content)
 
 
-def download_meeting(url: str, meeting_id: str, max_workers: int = 16):
+def download_meeting(url: str, meeting_id: str, max_workers: int = 16, chat: bool = True, video: bool = True, slides: bool = True):
     base_dir = path.join("presentation", meeting_id)
     if not path.isdir(base_dir):
         makedirs(base_dir)
@@ -118,8 +118,8 @@ def download_meeting(url: str, meeting_id: str, max_workers: int = 16):
     typer.echo(typer.style("BBB Recording has been downloaded!", fg=typer.colors.GREEN))
 
 
-def main(url: str, meeting_id: str, max_workers: int = 16):
-    download_meeting(url, meeting_id, max_workers=max_workers)
+def main(url: str, meeting_id: str, max_workers: int = 16, chat: bool = True, video: bool = True, slides: bool = True):
+    download_meeting(url, meeting_id, max_workers=max_workers, chat=chat, video=video, slides=slides)
     createZIPAndDeleteFiles(meeting_id)
 
 def loopOverFiles(dirName: str, zipObj):

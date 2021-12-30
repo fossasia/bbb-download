@@ -107,6 +107,25 @@
         <input type="text" class="form-control" id="server" name="server" required="true" />
       </div>
 
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="chat" name="chat" value="True" checked>
+        <label class="form-check-label" for="chat">
+          Chat
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="video" name="video" value="True" checked>
+        <label class="form-check-label" for="video">
+          Video
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="slides" name="slides" value="True" checked>
+        <label class="form-check-label" for="slides">
+          Slides
+        </label>
+      </div>
+
       <div id="loading">
       </div>
       <div id="tick-mark">
@@ -131,7 +150,6 @@
   <script>
     $('.form-group').on('submit', (e) => {
       e.preventDefault();
-      const form = document.getElementById('form');
       submitForm('form');
     })
 
