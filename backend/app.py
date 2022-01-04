@@ -84,7 +84,7 @@ def download(session, base_url, base_dir, file_name, stream=False, force=False):
             fi.write(res.content)
 
 
-def download_meeting(url: str, meeting_id: str, max_workers: int = 16, chat: bool = True, video: bool = True, slides: bool = True):
+def download_meeting(url: str, meeting_id: str, chat: bool, video: bool, slides: bool, max_workers: int = 16 ):
     base_dir = path.join("presentation", meeting_id)
     if not path.isdir(base_dir):
         makedirs(base_dir)
@@ -96,30 +96,34 @@ def download_meeting(url: str, meeting_id: str, max_workers: int = 16, chat: boo
         "cursor.xml",
         "deskshare.xml",
         "presentation_text.json",
-        "captions.json",
-        "slides_new.xml",
+        "captions.json"
     ]
+
+    if chat:
+        data_files.append("slides_new.xml")
 
     with requests.session() as session:
         for file in data_files:
             download(session, base_url, base_dir, file)
-        download_slides(session, base_url, base_dir, max_workers=max_workers)
+        if slides:
+            download_slides(session, base_url, base_dir, max_workers=max_workers)
 
-        medias = [
-            "video/webcams.webm",
-            "video/webcams.mp4",
-            "deskshare/deskshare.webm",
-            "deskshare/deskshare.mp4",
-        ]
+        if video:
+            medias = [
+                "video/webcams.webm",
+                "video/webcams.mp4",
+                "deskshare/deskshare.webm",
+                "deskshare/deskshare.mp4",
+            ]
 
-        for media in medias:
-            download(session, base_url, base_dir, media, stream=True)
+            for media in medias:
+                download(session, base_url, base_dir, media, stream=True)
 
     typer.echo(typer.style("BBB Recording has been downloaded!", fg=typer.colors.GREEN))
 
 
-def main(url: str, meeting_id: str, max_workers: int = 16, chat: bool = True, video: bool = True, slides: bool = True):
-    download_meeting(url, meeting_id, max_workers=max_workers, chat=chat, video=video, slides=slides)
+def main(url: str, meeting_id: str, chat: bool, video: bool, slides: bool, max_workers: int = 16):
+    download_meeting(url, meeting_id, chat, video, slides, max_workers=max_workers)
     createZIPAndDeleteFiles(meeting_id)
 
 def loopOverFiles(dirName: str, zipObj):
@@ -135,7 +139,6 @@ def loopOverFiles(dirName: str, zipObj):
 def createZIPAndDeleteFiles(meetingId: str):
     dirName = './presentation/' + meetingId
     zipName = 'recording-' + meetingId + '.zip'
-    print(zipName)
     with ZipFile(zipName, 'w') as zipObj:
         # add the folder data from presentation folder
         loopOverFiles(dirName, zipObj)
@@ -162,12 +165,13 @@ def root():
   if request.method == 'GET':
     return render_template('index.html')
   if request.method == 'POST':
-    url = request.form['server']
+    data = request.get_json()
+    url = data['server']
     server = 'https://' + url.split('/')[2]
     meeting_id = url.split('=')[1]
     try:
         if not recordingExists(meeting_id):
-            main(server, meeting_id)
+            main(server, meeting_id, data['chat'], data['video'], data['slides'])
         zipName = 'recording-' + meeting_id + '.zip'
         try:
             return send_file(zipName)

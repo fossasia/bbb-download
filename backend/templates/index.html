@@ -108,19 +108,19 @@
       </div>
 
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="chat" name="chat" value="True" checked>
+        <input class="form-check-input" type="checkbox" value="" id="chat" name="chat" value="true" checked>
         <label class="form-check-label" for="chat">
           Chat
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="video" name="video" value="True" checked>
+        <input class="form-check-input" type="checkbox" value="" id="video" name="video" value="true" checked>
         <label class="form-check-label" for="video">
           Video
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="slides" name="slides" value="True" checked>
+        <input class="form-check-input" type="checkbox" value="" id="slides" name="slides" value="true" checked>
         <label class="form-check-label" for="slides">
           Slides
         </label>
@@ -156,10 +156,17 @@
     const submitForm = (formId) => {
       $('#loading').addClass('loading');
       const formData = new FormData(document.getElementById(formId));
+      dataObject={};
+      formData.forEach((value, key) => dataObject[key] = value);
+      dataObject.chat === "" ? dataObject.chat = true : dataObject.chat = false
+      dataObject.video === "" ? dataObject.video = true : dataObject.video = false
+      dataObject.slides === "" ? dataObject.slides = true : dataObject.slides = false
+      dataObject = JSON.stringify(dataObject);
       const url = '/';
       fetch(url, {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: dataObject,
       }).then((res) => {
         $('#loading').removeClass('loading');
         $('#tick-mark').addClass('tick-mark');
