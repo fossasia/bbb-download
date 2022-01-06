@@ -1,0 +1,2 @@
+cd backend
+flask run
