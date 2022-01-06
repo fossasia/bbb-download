@@ -1,2 +1,1 @@
-cd backend
-flask run
+web: cd backend && python app.py
