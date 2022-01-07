@@ -84,7 +84,7 @@ def download(session, base_url, base_dir, file_name, stream=False, force=False):
             fi.write(res.content)
 
 
-def download_meeting(url: str, meeting_id: str, chat: bool, video: bool, slides: bool, max_workers: int = 16 ):
+def download_meeting(url: str, meeting_id: str, chat: bool, slides: bool, max_workers: int = 16 ):
     base_dir = path.join("presentation", meeting_id)
     if not path.isdir(base_dir):
         makedirs(base_dir)
@@ -108,22 +108,21 @@ def download_meeting(url: str, meeting_id: str, chat: bool, video: bool, slides:
         if slides:
             download_slides(session, base_url, base_dir, max_workers=max_workers)
 
-        if video:
-            medias = [
-                "video/webcams.webm",
-                "video/webcams.mp4",
-                "deskshare/deskshare.webm",
-                "deskshare/deskshare.mp4",
-            ]
+        medias = [
+            "video/webcams.webm",
+            "video/webcams.mp4",
+            "deskshare/deskshare.webm",
+            "deskshare/deskshare.mp4",
+        ]
 
-            for media in medias:
-                download(session, base_url, base_dir, media, stream=True)
+        for media in medias:
+            download(session, base_url, base_dir, media, stream=True)
 
     typer.echo(typer.style("BBB Recording has been downloaded!", fg=typer.colors.GREEN))
 
 
-def main(url: str, meeting_id: str, chat: bool, video: bool, slides: bool, max_workers: int = 16):
-    download_meeting(url, meeting_id, chat, video, slides, max_workers=max_workers)
+def main(url: str, meeting_id: str, chat: bool, slides: bool, max_workers: int = 16):
+    download_meeting(url, meeting_id, chat, slides, max_workers=max_workers)
     createZIPAndDeleteFiles(meeting_id)
 
 def loopOverFiles(dirName: str, zipObj):
@@ -171,7 +170,7 @@ def root():
     meeting_id = url.split('=')[1]
     try:
         if not recordingExists(meeting_id):
-            main(server, meeting_id, data['chat'], data['video'], data['slides'])
+            main(server, meeting_id, data['chat'], data['slides'])
         zipName = 'recording-' + meeting_id + '.zip'
         try:
             return send_file(zipName)
