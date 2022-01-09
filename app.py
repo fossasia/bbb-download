@@ -6,8 +6,8 @@ from zipfile import ZipFile
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 import xml.etree.ElementTree as ET
+
 import shutil
-import subprocess
 
 import typer
 import requests
@@ -124,7 +124,7 @@ def download_meeting(url: str, meeting_id: str, chat: bool, slides: bool, max_wo
 
 def main(url: str, meeting_id: str, chat: bool, slides: bool, max_workers: int = 16):
     download_meeting(url, meeting_id, chat, slides, max_workers=max_workers)
-    createZIPAndDeleteFiles(meeting_id)
+    createZIP(meeting_id)
 
 def loopOverFiles(dirName: str, zipObj):
     for folderName, subFolders, fileNames in os.walk(dirName):
@@ -136,7 +136,7 @@ def loopOverFiles(dirName: str, zipObj):
                 else:
                   zipObj.write(filePath, filePathArr[1])
 
-def createZIPAndDeleteFiles(meetingId: str):
+def createZIP(meetingId: str):
     dirName = './presentation/' + meetingId
     zipName = 'recording-' + meetingId + '.zip'
     with ZipFile(zipName, 'w') as zipObj:
@@ -149,16 +149,16 @@ def createZIPAndDeleteFiles(meetingId: str):
         files = ['logo.png', 'playback.css', 'playback.js', 'playback.html']
         for file in files:
             zipObj.write('../' + file)
-    # shutil.rmtree(dirName)
         
-def recordingExists(meeting_id: str):
+def deletePreviousFiles(meeting_id: str):
     zipName = 'recording-' + meeting_id + '.zip'
-    for folderName, subFolders, fileNames in os.walk('.'):
-        if zipName in fileNames:
-            return True
-    return False
+    presensationFolder = './presentation/' + meeting_id
+    if os.path.exists(zipName):
+        os.remove(zipName)
+    if os.path.exists(presensationFolder):
+        shutil.rmtree(presensationFolder)
 
-app = Flask(__name__, template_folder='.')
+app = Flask(__name__, template_folder='.', static_folder='.')
 
 @app.route('/', methods=['GET', 'POST'])
 def root():
@@ -170,9 +170,8 @@ def root():
     server = 'https://' + url.split('/')[2]
     meeting_id = url.split('=')[1]
     try:
-        print(recordingExists(meeting_id))
-        if not recordingExists(meeting_id):
-            main(server, meeting_id, data['chat'], data['slides'])
+        deletePreviousFiles(meeting_id)
+        main(server, meeting_id, data['chat'], data['slides'])
         zipName = 'recording-' + meeting_id + '.zip'
         try:
             return send_file(zipName)
@@ -182,9 +181,12 @@ def root():
     except Exception as e:
         return str(e)
 
+@app.route('/<path:path>')
+def static_file(path):
+    return app.send_static_file(path)
+
 
 if __name__ == '__main__':
-    p = subprocess.Popen(['python -m http.server'], shell=True)
     from waitress import serve
     serve(app, host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
-    # app.run()
+    

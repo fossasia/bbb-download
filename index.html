@@ -35,6 +35,14 @@
       text-align: center;
     }
 
+    .display-none {
+      display: none;
+    }
+
+    button {
+      margin: 10px;
+    }
+
     .loading {
       height: 0;
       width: 0;
@@ -127,6 +135,7 @@
 
       <div class="tac">
         <button type="submit" id="submit" class="btn btn-outline-success mt-2">Submit</button>
+        <a id="preview-anchor"><div id="preview-button" class="btn btn-outline-success mt-2 display-none">Preview</div></a>
       </div>
     </div>
   </form>
@@ -154,6 +163,7 @@
       formData.forEach((value, key) => dataObject[key] = value);
       dataObject.chat === "" ? dataObject.chat = true : dataObject.chat = false
       dataObject.slides === "" ? dataObject.slides = true : dataObject.slides = false
+      const meetingId = dataObject.server.split("=")[1];
       dataObject = JSON.stringify(dataObject);
       const url = '/';
       fetch(url, {
@@ -172,6 +182,8 @@
         document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
         a.click();
         a.remove();  //afterwards we remove the element again
+        $('#preview-button').removeClass('display-none');
+        $('#preview-anchor').attr('href', `/playback.html?meetingId=${meetingId}`);
       }).catch((err) => {
         console.log(err);
       })
