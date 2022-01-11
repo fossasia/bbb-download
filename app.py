@@ -145,10 +145,10 @@ def createZIP(meetingId: str):
         folders = ['acornmediaplayer', 'css', 'lib']
         # add player files
         for folder in folders:
-            loopOverFiles('../' + folder, zipObj)
+            loopOverFiles('./' + folder, zipObj)
         files = ['logo.png', 'playback.css', 'playback.js', 'playback.html']
         for file in files:
-            zipObj.write('../' + file)
+            zipObj.write('./' + file)
         
 def deletePreviousFiles(meeting_id: str):
     zipName = 'recording-' + meeting_id + '.zip'
