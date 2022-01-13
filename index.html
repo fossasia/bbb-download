@@ -132,6 +132,8 @@
       <div class="tac">
         <button type="submit" id="submit" class="btn btn-outline-success mt-2">Submit</button>
         <a id="preview-anchor"><div id="preview-button" class="btn btn-outline-success mt-2 display-none">Preview</div></a>
+        <a id="download-anchor"><div class="btn btn-outline-success mt-2 display-none" id="download-button" data-toggle="tooltip" data-placement="top" title="Download the recording with web based player. You can use that on your local machine as well as for hosting on a server.">Download</div></a>
+        <a id="download-mp4-anchor"><div class="btn btn-outline-success mt-2 display-none" id="download-mp4-button" data-toggle="tooltip" data-placement="top" title="Download the complete recording as one mp4 file">Download [mp4]</div></a>
       </div>
     </div>
   </form>
@@ -147,6 +149,10 @@
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
   <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+    
     $('.form-group').on('submit', (e) => {
       e.preventDefault();
       submitForm('form');
@@ -172,14 +178,18 @@
         return res.blob();
       }).then((blob) => {
         var url = window.URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = "recording.zip";
-        document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-        a.click();
-        a.remove();  //afterwards we remove the element again
+        var a = $('#download-anchor');
+        a.attr({
+          href: url,
+          download: 'recording.zip'
+        });
         $('#preview-button').removeClass('display-none');
-        $('#preview-anchor').attr('href', `/playback.html?meetingId=${meetingId}`);
+        $('#download-button').removeClass('display-none');
+        $('#download-mp4-button').removeClass('display-none');
+        $('#preview-anchor').attr({
+          href: `/playback.html?meetingId=${meetingId}`,
+          target: '_blank'
+        });
       }).catch((err) => {
         console.log(err);
       })
