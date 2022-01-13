@@ -36,7 +36,7 @@
     }
 
     .display-none {
-      display: none;
+      display: none !important;
     }
 
     .loading {
@@ -135,6 +135,11 @@
         <a id="download-anchor"><div class="btn btn-outline-success mt-2 display-none" id="download-button" data-toggle="tooltip" data-placement="top" title="Download the recording with web based player. You can use that on your local machine as well as for hosting on a server.">Download</div></a>
         <a id="download-mp4-anchor"><div class="btn btn-outline-success mt-2 display-none" id="download-mp4-button" data-toggle="tooltip" data-placement="top" title="Download the complete recording as one mp4 file">Download [mp4]</div></a>
       </div>
+      <div class="alert alert-primary d-flex align-items-center mt-2 display-none" role="alert">
+        <div class="display-none">
+          The preview is available for 24 hours after generation. Thank you for using our service.
+        </div>
+      </div>
     </div>
   </form>
   <!-- Optional JavaScript -->
@@ -183,9 +188,7 @@
           href: url,
           download: 'recording.zip'
         });
-        $('#preview-button').removeClass('display-none');
-        $('#download-button').removeClass('display-none');
-        $('#download-mp4-button').removeClass('display-none');
+        $('.display-none').removeClass('display-none');
         $('#preview-anchor').attr({
           href: `/playback.html?meetingId=${meetingId}`,
           target: '_blank'
