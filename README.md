@@ -1,7 +1,14 @@
 # bbb-playback
 Modified BBB Playback webapp to support any presentation host
 
-## Download a BigBlueButton recording (using script)
+### How to use?
+
+There are two ways to use this application:
+<details>
+  <summary>
+    Using script
+  </summary>
+  <br>
 
 1. Create and activate virtual environment
 ```sh
@@ -17,7 +24,7 @@ Python 3.8
 pip install -r requirements.txt
 ```
 
-2. Run `python scripts/download_presentation.py <bbb_server_url> <recording_id>`
+3. Run `python scripts/download_presentation.py <bbb_server_url> <recording_id>`
 
 ```sh
 python scripts/download_presentation.py https://video2.eventyay.com 7145654166c22082657db53281dde109b7b2735e-1615943110349
@@ -25,8 +32,13 @@ python scripts/download_presentation.py https://video2.eventyay.com 7145654166c2
 
 [![asciicast](https://asciinema.org/a/401693.svg)](https://asciinema.org/a/401693)
 
+</details>
 
-## Download recording with player (using web GUI)
+<details>
+  <summary>
+    Using web GUI
+  </summary>
+  <br>
 
 1. Enter video URL and click download button.
 
@@ -40,3 +52,19 @@ python3 -m http.server
 4. Open `http://localhost:8080/playback.html` with meetingId in params. <br>
 e.g. `http://0.0.0.0:8000/playback.html?meetingId=8b17c624f047b18a995c7469c2f9d3e5c4ccb560-1629196080320`
 
+</details>
+
+
+### Credits
+
+<details>
+  <summary>accornmediaplayer</summary>
+  Copyright (C) 2010 Cristian I. Colceriu
+  License: [MIT License](https://github.com/ghinda/acornmediaplayer/blob/gh-pages/MIT-LICENSE.txt)
+</details>
+
+<details>
+  <summary>bbb-playback</summary>
+  Copyright (c) 2012 BigBlueButton Inc.
+  License: [LGPL License](https://github.com/bigbluebutton/bbb-playback/blob/develop/LICENSE)
+</details>
