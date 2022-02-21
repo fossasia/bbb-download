@@ -1,14 +1,11 @@
-# bbb-playback
-Modified BBB Playback webapp to support any presentation host
+# BBB Video Exporter
+The goal of this project is to enable the export of video and presentations from BigBlueButton instances. You can use this project through the commandline interface executing a script or through the user a web interface in a browser. You do not need to install the BBB video exporter on the BBB server itself. You can set it up anywhere and copy the original URL of the video you want to export into the form field of  the BBB video exporter.
 
-### How to use?
+## How to use BBB Video Exporter
 
-There are two ways to use this application:
-<details>
-  <summary>
-    Using script
-  </summary>
-  <br>
+There are two ways to use this application a) per script and b) per user web interface in a browser.
+
+### Usage per script
 
 1. Create and activate virtual environment
 ```sh
@@ -32,13 +29,8 @@ python scripts/download_presentation.py https://video2.eventyay.com 7145654166c2
 
 [![asciicast](https://asciinema.org/a/401693.svg)](https://asciinema.org/a/401693)
 
-</details>
 
-<details>
-  <summary>
-    Using web GUI
-  </summary>
-  <br>
+### Usage per web GUI
 
 1. Enter video URL and click download button.
 
@@ -52,19 +44,13 @@ python3 -m http.server
 4. Open `http://localhost:8080/playback.html` with meetingId in params. <br>
 e.g. `http://0.0.0.0:8000/playback.html?meetingId=8b17c624f047b18a995c7469c2f9d3e5c4ccb560-1629196080320`
 
-</details>
-
 
 ### Credits
 
-<details>
-  <summary>accornmediaplayer</summary>
+* accornmediaplayer
   Copyright (C) 2010 Cristian I. Colceriu
   License: [MIT License](https://github.com/ghinda/acornmediaplayer/blob/gh-pages/MIT-LICENSE.txt)
-</details>
 
-<details>
-  <summary>bbb-playback</summary>
+* bbb-playback
   Copyright (c) 2012 BigBlueButton Inc.
   License: [LGPL License](https://github.com/bigbluebutton/bbb-playback/blob/develop/LICENSE)
-</details>
