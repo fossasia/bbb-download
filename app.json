@@ -1,0 +1,8 @@
+{
+  "cron": [
+    {
+      "command": "rm -rf presentation && rm -f *.zip",
+      "schedule": "*/30 * * * *"
+    }
+  ]
+}
