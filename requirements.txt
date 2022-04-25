@@ -1,5 +1,5 @@
 Flask==2.0.1
 requests==2.25.1
 tqdm==4.59.0
-typer==0.4.0
+typer==0.4.1
 waitress==2.1.1
